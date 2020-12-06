@@ -12,6 +12,7 @@ typedef struct{
     int id, inicio, fim;
 } t_Limits;
 
+
 void *tarefa(void *arg){
     t_Limits *args = (t_Limits*)arg;
 
@@ -27,7 +28,7 @@ void *tarefa(void *arg){
 int main(void){
 
     pthread_t tid_sistema[NTHREADS]; // 2 threads
-    t_Limits *limites; // vai receber os argumentos das threads
+    t_Limits *limites; // referencia para os argumentos das threads
     int tamanhoVetor; // tamanho do vetor que sera inserido pelo usuario
 
     printf("Digite o tamanho do vetor(10 < N < 100): ");
@@ -55,7 +56,7 @@ int main(void){
 
     // criacao das threads
     for (int thread = 0; thread < NTHREADS; thread++){
-        // alocando espaco para os limites
+        // alocando espaco para as estruturas que serão passadas como argumento para as threads
         if((limites = (t_Limits*)malloc(sizeof(t_Limits))) == NULL){
             printf("Erro ao alocar memória para o struct de dados\n");
             return 1;
@@ -63,11 +64,11 @@ int main(void){
 
         //preenchendo os valores dos argumentos da thread
         limites-> id = thread; // identificador da thread
-        if((tamanhoVetor %2) == 0){ // vetor com tamanho par
+        if((tamanhoVetor % 2) == 0){ // vetor com tamanho par
             limites->inicio = thread * (tamanhoVetor/2); //onde a thread vai comecar a processar o vetor
             limites->fim = thread * (tamanhoVetor/2) + tamanhoVetor/2;//onde a thread vai terminar o processamento
         }
-        else if((tamanhoVetor % 2) != 0){ //vetor com tamanho impar
+        else if((tamanhoVetor % 2) != 0){ //vetor com tamanho ímpar
             limites->inicio = thread * (tamanhoVetor/2); //onde a thread vai comecar a processar o vetor
             limites->fim = thread * (tamanhoVetor/2) + tamanhoVetor/2 + thread;//onde a thread vai terminar o processamento
         }
@@ -83,7 +84,7 @@ int main(void){
      for(int thread = 0; thread < NTHREADS; thread++){
          if(pthread_join(tid_sistema[thread], NULL)){
              printf("--ERRO: pthread_join() \n");
-             exit(-1);
+             return 1;
          }
      }
 
