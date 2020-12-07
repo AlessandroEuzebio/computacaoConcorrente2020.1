@@ -92,7 +92,6 @@ int main(void){
     for (int i = 0; i < tamanhoVetor; i++){
         printf("%d ", (*ptr_vetor) + i * 4);
     }
-
     printf("\n");
    
     return 0;
