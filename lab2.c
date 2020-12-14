@@ -19,7 +19,7 @@ void *multiplicaMat(void *arg){
     for (int i = args->id; i < args->dimensao; i += qtd_threads){
         for (int j = 0; j < args->dimensao; j++){
             for (int k = 0; k < args->dimensao; k++){
-                matrizC[i * args->dimensao + j] += matrizA[i * args->dimensao + k] * matrizB[k * args->dimensao + j]; //mesmo que C[i][j] += A[i][k] * B[k][j];
+                matrizC[i * args->dimensao + j] += matrizA[i * args->dimensao + k] * matrizB[k * args->dimensao + j]; //mesmo que matrizC[i][j] += matrizA[i][k] * matrizB[k][j];
             }
         }
     }
