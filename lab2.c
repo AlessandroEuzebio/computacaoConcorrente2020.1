@@ -15,7 +15,7 @@ typedef struct{
 void *multiplicaMat(void *arg){
     tArgs *args = (tArgs *)arg;
 
-    //multiplicacao sas matrizes
+    //multiplicacao das matrizes
     for (int i = args->id; i < args->dimensao; i += qtd_threads){
         for (int j = 0; j < args->dimensao; j++){
             for (int k = 0; k < args->dimensao; k++){
