@@ -4,21 +4,22 @@
 #include "timer.h"
 
 float *matrizA, *matrizB, *matrizC;
-int qtd_threads;
+int qtd_threads;//quantidade de threads
 
 typedef struct{
-    int id;
-    int dimensao;
+    int id;//id da thread
+    int dimensao;//dimensao das matrizes
 }tArgs;
 
+//funcao executada pelas threads
 void *multiplicaMat(void *arg){
     tArgs *args = (tArgs *)arg;
 
-    //multiplica as matrizes
+    //multiplicacao sas matrizes
     for (int i = args->id; i < args->dimensao; i += qtd_threads){
         for (int j = 0; j < args->dimensao; j++){
             for (int k = 0; k < args->dimensao; k++){
-                matrizC[i * args->dimensao + j] += matrizA[i * args->dimensao + k] * matrizB[k * args->dimensao + j];
+                matrizC[i * args->dimensao + j] += matrizA[i * args->dimensao + k] * matrizB[k * args->dimensao + j]; //mesmo que C[i][j] += A[i][k] * B[k][j];
             }
         }
     }
@@ -26,17 +27,18 @@ void *multiplicaMat(void *arg){
 }
 
 int main(int argc, char *argv[]){
-    pthread_t *tid;
-    tArgs *args;
+    pthread_t *tid; //threads
+    tArgs *args; //variavel que vai armazenar o id e a dimensao
     int dim; //dimensao das matrizes
     double inicio, fim, delta; //variaveis de medicao de tempo
 
+    // verifica todos os argumentos foram passados via linha de comando
     if (argc < 3){
-        printf("Digite %s <quantidade de threads> <dimensao das matrizes>", argv[0]);
+        printf("Digite %s <dimensao das matrizes> <quantidade de threads>", argv[0]);
         return 1;
     }
-    qtd_threads = atoi(argv[1]);
-    dim = atoi(argv[2]);
+    dim = atoi(argv[1]);
+    qtd_threads = atoi(argv[2]);
 
     //alocacao de memoria para as estruturas
     GET_TIME(inicio);
@@ -56,7 +58,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    //inicializar as estruturas
+    //inicializacao das estruturas
     for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
             matrizA[i * dim + j] = 1;
@@ -69,14 +71,14 @@ int main(int argc, char *argv[]){
     printf("Tempo de alocacao e inicializacao das estruturas: %lf\n", delta);
 
     GET_TIME(inicio);
-    //alocando espaco para as threads
+    //alocacao de espaco para as threads
     tid = (pthread_t *)malloc(sizeof(pthread_t) * qtd_threads);
     if (tid == NULL){
         printf("ERRO--malloc");
         return 1;
     }
 
-    //alocando espaco para as estruturas
+    //alocacao de espaco para as estruturas
     args = (tArgs *)malloc(sizeof(tArgs) * qtd_threads);
     if (args == NULL){
         printf("ERRO--malloc");
@@ -92,7 +94,7 @@ int main(int argc, char *argv[]){
             return 1;
         }
     }
-
+    
     for (int i = 0; i < qtd_threads; i++){
         pthread_join(*(tid + i), NULL);
     }
