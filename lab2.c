@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
     dim = atoi(argv[2]);
 
     //alocacao de memoria para as estruturas
+    GET_TIME(inicio);
     matrizA = (float *)malloc(sizeof(float) * (dim * dim));
     if (matrizA == NULL){
         printf("ERRO--malloc");
@@ -63,6 +64,9 @@ int main(int argc, char *argv[]){
             matrizC[i * dim + j] = 0;
         }
     }
+    GET_TIME(fim);
+    delta = fim - inicio;
+    printf("Tempo de alocacao e inicializacao das estruturas: %lf\n", delta);
 
     GET_TIME(inicio);
     //alocando espaco para as threads
@@ -92,15 +96,19 @@ int main(int argc, char *argv[]){
     for (int i = 0; i < qtd_threads; i++){
         pthread_join(*(tid + i), NULL);
     }
-    
+
     GET_TIME(fim);
     delta = fim - inicio;
-    printf("Tempo: %lf\n", delta);
+    printf("Tempo criacao das threads, execucao da multiplicacao e termino das threads: %lf\n", delta);
 
-    //libera a memoria
+    GET_TIME(inicio);
+    //liberar a memoria
     free(matrizA);
     free(matrizB);
     free(matrizC);
+    GET_TIME(fim);
+    delta = fim - inicio;
+    printf("Tempo de finalizacao do programa: %lf\n", delta);
 
     return 0;
 }
