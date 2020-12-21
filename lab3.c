@@ -85,9 +85,6 @@ int main(int argc, char *argv[]){
     printf("Valor de pi concorrente: %.15lf\n", pi_conc);
     printf("Valor da constante PI em math.h: %.15lf\n", M_PI);
 
-    if(fabs(M_PI - pi_conc) < fabs(M_PI - pi_seq))
-        printf("soma concorrente e mais exata\n");
-
     free(tid);
 
     return 0;
