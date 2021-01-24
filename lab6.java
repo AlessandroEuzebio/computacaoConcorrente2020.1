@@ -1,18 +1,12 @@
 class Vetor{
 
-    //tamanho do vetor
-    int tamanho;
-
-    public Vetor(int tamanho){
-        this.tamanho = tamanho;
-    }
-
-    int[] vetor = new int[tamanho];
+    int[] vetor = new int[10];
 
     public void imprimeVetor(){
         for(int i=0; i<vetor.length; i++){
-            System.out.println(vetor[i]+" ");
+            System.out.print(vetor[i]+" ");
         }
+        System.out.println();
     }
 
     public int getElemento(int elemento){
@@ -45,18 +39,18 @@ class T extends Thread{
     }
 
     public void run(){
-        System.out.println("Thread " + this.id + "iniciou.");
+        System.out.println("Thread " + this.id + " iniciou.");
         for(int i = inicio; i < fim; i++){
             c.alteraElemento(i, a.getElemento(i) + b.getElemento(i));
         }
-        System.out.println("Thread " + this.id + "terminou.");
+        System.out.println("Thread " + this.id + " terminou.");
     }
 
 }
 
 class SomaVetores{
     static final int N = 2; // quantidade de threads
-    static final int K = 10; // tamanho dos vetores
+    static final int K = 10; // quantidade de elementos do vetor
 
     public static void main(String args[]){
 
@@ -64,14 +58,15 @@ class SomaVetores{
         Thread[] threads = new Thread[N];
 
         // cria 3 instancias de Vetor
-        Vetor a = new Vetor(K);
-        Vetor b = new Vetor(K);
-        Vetor c = new Vetor(K);
+        Vetor vetorA = new Vetor();
+        Vetor vetorB = new Vetor();
+        Vetor vetorC = new Vetor();
+
 
         // inicializando os vetores a e b
         for(int i=0; i<K; i++){
-            a.alteraElemento(i, i);
-            b.alteraElemento(i, i);
+            vetorA.alteraElemento(i, i);
+            vetorB.alteraElemento(i, i);
         }
 
         // cria as threads
@@ -84,7 +79,7 @@ class SomaVetores{
             else
                 fim = inicio + K/N;
 
-            threads[i] = new T(i, a, b, c, inicio, fim);
+            threads[i] = new T(i, vetorA, vetorB, vetorC, inicio, fim);
         }
 
         //inicia as threads
@@ -98,6 +93,6 @@ class SomaVetores{
         }
 
         System.out.println("Vetor C: ");
-        c.imprimeVetor();
+        vetorC.imprimeVetor();
     }
 }
