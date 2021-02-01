@@ -49,12 +49,12 @@ class Buffer{
     public synchronized void saiConsumidor(int id){
         out = (out + 1) % tamanhoBuffer; // próxima posição do buffer a ser consumida
         notifyAll();
-        system.out.println("pc.Consumidor("+id+")finalizado");
+        System.out.println("pc.Consumidor("+id+")finalizado");
         imprimeBuffer();
     }
 
     public synchronized void imprimeBuffer(){
-        System.out.println("----buffer----")
+        System.out.println("----buffer----");
         for(int i=0; i<this.tamanhoBuffer; i++){
             System.out.print(buffer[i]+" ");
         }
@@ -75,11 +75,11 @@ class Buffer{
     }
 }
 
-Class Produtor extends Thread{
+class Produtor extends Thread{
     int id;
     Buffer buffer;
 
-    Consumidor(int id, Buffer buffer){
+    Produtor(int id, Buffer buffer){
         this.id = id;
         this.buffer = buffer;
     }
@@ -91,7 +91,7 @@ Class Produtor extends Thread{
     }
 }
 
-Class Consumidor extends Thread{
+class Consumidor extends Thread{
     int id;
     Buffer buffer;
 
@@ -114,8 +114,8 @@ class Application{
     public static void main(String args[]){
         int i;
         Buffer buffer = new Buffer(10); // construtor recebe como parâmetro o tamanho do buffer
-        Produtor[] p = new Produtor[Produtores];
-        Consumidor[] c = new Consumidor[Consumidores]
+        Produtor[] p = new Produtor[produtores];
+        Consumidor[] c = new Consumidor[consumidores];
 
         buffer.iniciaBuffer();
 
