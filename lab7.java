@@ -5,7 +5,7 @@ class Buffer{
     private int in = 0; // posicão do buffer onde as threads produtoras vão fazer a inserção
     private int out = 0; // posição do buffer onde as threads consumidoras vão fazer a remoção
 
-    public Buffer(tamanhoBuffer){
+    public Buffer(int tamanhoBuffer){
         this.tamanhoBuffer = tamanhoBuffer;
     }
 
