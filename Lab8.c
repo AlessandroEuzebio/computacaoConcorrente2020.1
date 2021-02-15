@@ -154,4 +154,4 @@
           pthread_mutex_unlock(&mutex);
       }
 
-  //e)
+  //e)Não recursivos, pois logo após um blqueio é sempre chamado o desbloqueio antes de a thread acabe se bloqueando novamente.
