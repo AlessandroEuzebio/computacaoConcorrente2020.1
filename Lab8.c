@@ -4,26 +4,7 @@
        iniciado com o valor 1 para garantir a exclusão mútua na hora da leitura.
   */
   
-  // B)Sim, como foi visto em aula, a versão abaixo é bem mais simples:
-    
-    int leitores = 0;     // quantidade de leitores lendo
-    sem_t mutex, escrita; //ambos inicializados com 1
-                                           
-    void leitor(){                                      
-        sem_wait(&mutex);                                  void escritor(){
-        leitores++;                                            sem_wait(&escrita);
-        if (leitores == 1){                                    /* faz a escrita */
-            sem_wait(&escrita);                                sem_post(&escrita);
-        }                                                  }
-        sem_post(&mutex);
-        /* faz a leitura */
-        sem_wait(&mutex);
-        leitores--;
-        if (leitores == 0){
-            sem_post(&escrita);
-        }
-        sem_post(&mutex);
-    }
+  // B)Não, pois para manter a prioridade dos escritores é necessário manter todos os mecanismos de sincronização.
 
 
   // C)
@@ -129,46 +110,48 @@
           pthread_exit(NULL);
       }
 
+
   //d)
+      pthread_mutex_t mutex;
+
       //leitores
       while(1) {
           sem_wait(&leit); 
-          sem_wait(&em_l); // inicia a exclusão mútua
-          leitores++; //incrementa a quantidade de leitores
-          if(leitores==1){ //se o primeiro leitor tiver entrado
-              sem_wait(&escr);// tira o sinal da escrita (bloqueia)
+          pthread_mutex_lock(&mutex);
+          leitores++; 
+          if(leitores==1){ 
+              sem_wait(&escr);
           }
-          sem_post(&em_l); //libera a exclusão mutua
+          pthread_mutex_unlock(&mutex);
           sem_post(&leit);//???????????????????
 
           //le... 
 
-          sem_wait(&em_l); // entra na exclusão mútua de novo
-          leitores--; //decrementa a quantidade de leitores
-          if(leitores==0) { // se for o último leitor 
-              sem_post(&escr); // libera o sinal dos escritores
+          pthread_mutex_lock(&mutex);
+          leitores--; 
+          if(leitores==0) { 
+              sem_post(&escr); 
           }
-          sem_post(&em_l); // sai da exclusão mútua
+          pthread_mutex_unlock(&mutex);
       }
 
       //escritores
       while(1) {
-          sem_wait(&em_e); //inicia a exclusão mútua
-          e++; // incrementa a quantidade de escritores ativos (1 é o mácimo)
-          if(e==1){ //se houver um leitor ativo
-              sem_wait(&leit);//tira o sinal da exclusão mútua de leitores
+          pthread_mutex_lock(&mutex);
+          e++; // 
+          if(e==1){ 
+              sem_wait(&leit);
           } 
-          sem_post(&em_e);//termina a exclusão mútua
+          pthread_mutex_unlock(&mutex);
           sem_wait(&escr);
           //escreve...
           sem_post(&escr);
-
-          sem_wait(&em_e);//inicia novamente a exclusão mútua
-          e--; // decrementa a quantidade de escritores
-          if(e==0){ // s for o último escritor
-              sem_post(&leit); // libera a leitura
+          pthread_mutex_lock(&mutex);
+          e--; 
+          if(e==0){ 
+              sem_post(&leit); 
           } 
-          sem_post(&em_e);// termina a exclusão mútua
+          pthread_mutex_unlock(&mutex);
       }
 
   //e)
