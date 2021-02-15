@@ -1,16 +1,15 @@
 1-
   /* A)Como em_e e em_l são utilizados para fazer a exclusão mútua, ambos devem ser inicializado com o valor 1. 
-      Levando em consideração que os semáforos escr e leit desempenham o papel de semáforo contador, leit deve ser iniciado com o valor de mesma quantidade de 
-      leitores e escr com o valor 1, pois só um escritor é permitido por vez.
+       O semáforo leit também deve ser iniciado com o valor 1, pois é o responsável pela prioridade da leitura, e por último, o semáforo escr também deve ser
+       iniciado com o valor 1 para garantir a exclusão mútua na hora da leitura.
   */
   
   // B)Sim, como foi visto em aula, a versão abaixo é bem mais simples:
     
     int leitores = 0;     // quantidade de leitores lendo
     sem_t mutex, escrita; //ambos inicializados com 1
-
-    //leitores                                             
-    void leitor(){                                         //escritores
+                                           
+    void leitor(){                                      
         sem_wait(&mutex);                                  void escritor(){
         leitores++;                                            sem_wait(&escrita);
         if (leitores == 1){                                    /* faz a escrita */
@@ -131,4 +130,45 @@
       }
 
   //d)
+      //leitores
+      while(1) {
+          sem_wait(&leit); 
+          sem_wait(&em_l); // inicia a exclusão mútua
+          leitores++; //incrementa a quantidade de leitores
+          if(leitores==1){ //se o primeiro leitor tiver entrado
+              sem_wait(&escr);// tira o sinal da escrita (bloqueia)
+          }
+          sem_post(&em_l); //libera a exclusão mutua
+          sem_post(&leit);//???????????????????
+
+          //le... 
+
+          sem_wait(&em_l); // entra na exclusão mútua de novo
+          leitores--; //decrementa a quantidade de leitores
+          if(leitores==0) { // se for o último leitor 
+              sem_post(&escr); // libera o sinal dos escritores
+          }
+          sem_post(&em_l); // sai da exclusão mútua
+      }
+
+      //escritores
+      while(1) {
+          sem_wait(&em_e); //inicia a exclusão mútua
+          e++; // incrementa a quantidade de escritores ativos (1 é o mácimo)
+          if(e==1){ //se houver um leitor ativo
+              sem_wait(&leit);//tira o sinal da exclusão mútua de leitores
+          } 
+          sem_post(&em_e);//termina a exclusão mútua
+          sem_wait(&escr);
+          //escreve...
+          sem_post(&escr);
+
+          sem_wait(&em_e);//inicia novamente a exclusão mútua
+          e--; // decrementa a quantidade de escritores
+          if(e==0){ // s for o último escritor
+              sem_post(&leit); // libera a leitura
+          } 
+          sem_post(&em_e);// termina a exclusão mútua
+      }
+
   //e)
