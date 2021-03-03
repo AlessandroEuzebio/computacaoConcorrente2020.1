@@ -7,7 +7,7 @@
 //declaração das variaveis globais
 
 int *buffer, *estruturaDeControle, M, N, count = 0;
-long long int *qtd_elementos; //primeiro elemento do arquivo
+long long int *qtd_elementos; //primeiro elemento do arquivo a ser lido
 FILE *ptr_file;
 
 //thread buscaMaiorSequencia
@@ -56,8 +56,7 @@ void *buscaMaiorSequencia(){
             pthread_cond_wait(&cond_buscaMaiorSequencia, &mutex);
             printf("buscaMaiorSequencia DESBLOQUEADA\n");
         }
-        //printf("INICIANDO buscaMaiorSequencia NO BLOCO %d\n", posicaoBuffer);
-        qtd_elementosNoBloco = *(estruturaDeControle + (posicaoBuffer * 4)); //buffer[posicaoBuffer][0]
+        qtd_elementosNoBloco = *(estruturaDeControle + (posicaoBuffer * 4)); //estruturaDeControle[posicaoBuffer][0]
         for(int j=0; j<qtd_elementosNoBloco; j++){
             if(elemento_maiorSequencia != *(buffer + posicaoBuffer*N + j)){
                 elemento_maiorSequencia = *(buffer + posicaoBuffer*N + j);
@@ -120,8 +119,8 @@ void *buscaTriplas(){
         *(estruturaDeControle + posicaoBuffer*4 + 2) = 0; //flag que indica que o bloco já foi lido
         pthread_mutex_unlock(&mutex);
 
-        // *(estruturaDeControle + posicaoBuffer*4 + 1) == 0 && 
-        if((*(estruturaDeControle + posicaoBuffer*4 + 2)) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 3)) == 0){
+        
+        if(*(estruturaDeControle + posicaoBuffer*4 + 1) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 2)) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 3)) == 0){
             pthread_cond_signal(&cond_Buffer);
         }
         printf("Thread buscaTriplas terminou no bloco %d\n", posicaoBuffer + 1);
@@ -161,8 +160,8 @@ void *buscaSequencia(){
         *(estruturaDeControle + posicaoBuffer*4 + 3) = 0;        
         pthread_mutex_unlock(&mutex);
 
-        // *(estruturaDeControle + posicaoBuffer*4 + 1) == 0 && 
-        if((*(estruturaDeControle + posicaoBuffer*4 + 2)) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 3)) == 0){
+     
+        if(*(estruturaDeControle + posicaoBuffer*4 + 1) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 2)) == 0 && (*(estruturaDeControle + posicaoBuffer*4 + 3)) == 0){
             pthread_cond_signal(&cond_Buffer);
         }
         printf("Thread buscaSequencia terminou no bloco %d\n", posicaoBuffer + 1);
@@ -319,10 +318,10 @@ int main(int argc, char *argv[]){
     if(pthread_create(&tid[0], NULL, carregaBuffer, NULL)){printf("Erro--pthread_create\n"); return 1;}
     if(pthread_create(&tid[1], NULL, buscaSequencia, NULL)){printf("Erro--pthread_create\n"); return 1;}
     if(pthread_create(&tid[2], NULL, buscaTriplas, NULL)){printf("Erro--pthread_create\n"); return 1;}
-    //if(pthread_create(&tid[3], NULL, buscaMaiorSequencia, NULL)){printf("Erro--pthread_create\n"); return 1;} 
+    if(pthread_create(&tid[3], NULL, buscaMaiorSequencia, NULL)){printf("Erro--pthread_create\n"); return 1;} 
 
     //faz o join
-    for(int i=0; i<3; i++){
+    for(int i=0; i<4; i++){
         if(pthread_join(tid[i], NULL)){
             printf("Erro--pthread_join\n");
             return 1;
